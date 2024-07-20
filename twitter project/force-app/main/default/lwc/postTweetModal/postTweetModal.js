@@ -1,23 +1,53 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, wire } from 'lwc';
 import { CloseActionScreenEvent } from 'lightning/actions';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { publish, MessageContext } from 'lightning/messageService';
+import TWEET_CREATION_MESSAGE from '@salesforce/messageChannel/TweetCreationMessageChannel__c';
+import createTweet from '@salesforce/apex/TweetController.createTweet';
+import isUserAndUsernameSame from '@salesforce/apex/TweetController.isUserAndUsernameSame';
+import createTweetRecord from '@salesforce/apex/TweetController.createTweetRecord';
 
 export default class PostTweetModal extends LightningElement {
     @api
     recordId;
 
+    @wire(MessageContext)
+    messageContext;
 
     closeModal() {
         this.dispatchEvent(new CloseActionScreenEvent());
     }
 
-    handlePost() {
+    async handlePost() {
         let tweetTextField = this.template.querySelector('lightning-textarea');
         let tweetText = tweetTextField.value;
-        console.log('******** ' + tweetText);
         if (!tweetText) {
             this.showToast('Error','Please provide any text in Tweet Text field', 'error'); // maybe normal validation shoudl be here
             return;
+        }
+
+        let isUsernamesEqual =  await isUserAndUsernameSame({ contactId : this.recordId});
+
+        if (!isUsernamesEqual && isUsernamesEqual != undefined) {
+            this.showToast('Error','The Username on contact and your do not match. Please, do tweets on your records', 'error'); // maybe normal validation shoudl be here
+            return;
+        }
+
+        try {
+            let tweetId = await createTweet({ tweetText: tweetText });
+            let isTweetInserted;
+
+            if (tweetId) {
+                isTweetInserted = await createTweetRecord({ tweetText: tweetText, tweetId: tweetId, contactId: this.recordId});
+            }
+
+            if (isTweetInserted) {
+                const message = { isTweetUpdated: true };
+                publish(this.messageContext, TWEET_CREATION_MESSAGE, message);
+            }
+
+        } catch (error) {
+            console.log('error ' + error + '  ' + JSON.stringify(error));
         }
 
         this.closeModal();
@@ -30,6 +60,7 @@ export default class PostTweetModal extends LightningElement {
                 title: title,
                 message: msg,
                 variant: variant,
+                mode: 'sticky'
             }),
         );
     }
