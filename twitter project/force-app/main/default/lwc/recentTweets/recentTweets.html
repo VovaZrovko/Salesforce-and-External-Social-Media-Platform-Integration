@@ -1,0 +1,33 @@
+<template>
+    <lightning-card title="Recent Tweets">
+        <lightning-datatable
+            hide-checkbox-column
+            key-field="id"
+            data={pageDataByPageIndex}
+            columns={columns}
+            onrowaction={handleRowAction}>
+        </lightning-datatable>
+
+        <div slot="footer">
+            <lightning-button 
+                variant="brand"
+                data-id="prev"
+                label="Previous"
+                onclick={handlePageChange}
+                class="slds-m-right_x-small"
+                disabled={isPrevious}>
+            </lightning-button>
+
+            <span>{pageIndex} of {pageCount}</span>
+
+            <lightning-button 
+                variant="brand"
+                data-id="next"
+                label="Next"
+                onclick={handlePageChange}
+                class="slds-m-left_x-small"
+                disabled={isNext}>
+            </lightning-button>
+        </div>
+    </lightning-card>
+</template>
