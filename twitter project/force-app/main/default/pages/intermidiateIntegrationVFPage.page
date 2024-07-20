@@ -1,0 +1,6 @@
+<apex:page controller="TwitterAuthController" action="{!getAccessToken}">
+    <script>
+        const lwcTabUrl = '/lightning/n/Auth_Twitter';
+        window.top.location.href = lwcTabUrl;
+    </script>
+</apex:page>

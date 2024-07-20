@@ -1,0 +1,17 @@
+<template>
+    <template lwc:if={ifSessionExpired}>
+        <lightning-card title={cardTitle} class="fullheight">
+            <div class="slds-p-left--medium">
+                <span>Your session for twitter integration will exist to {formattedExpirationDateTime}</span>
+            </div>
+        </lightning-card>
+    </template>
+    <template lwc:else>
+        <lightning-card  title="Authorize an user" class="fullheight">
+            <lightning-button label="Sign In" slot="actions" onclick={handleAuthorization}></lightning-button>
+            <div class="slds-p-left--medium">
+                <span>Please Sign in</span>
+            </div>
+        </lightning-card>
+    </template>
+</template>
