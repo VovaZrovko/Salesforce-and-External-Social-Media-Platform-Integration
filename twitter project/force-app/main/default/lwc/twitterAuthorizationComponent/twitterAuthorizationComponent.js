@@ -2,7 +2,7 @@ import { LightningElement, wire } from 'lwc';
 import getTwitterUserSettings from '@salesforce/apex/TwitterAuthController.getTwitterUserSettings';
 import getTwitterAppConfig from '@salesforce/apex/TwitterAuthController.getTwitterAppConfig';
 
-const SPLITSYMBOL = '~';
+const DELIMITER = '~';
 const AUTHORIZEURL = 'https://twitter.com/i/oauth2/authorize?';
 
 export default class TwitterAuthorizationComponent extends LightningElement {
@@ -28,7 +28,7 @@ export default class TwitterAuthorizationComponent extends LightningElement {
 
     async connectedCallback() {
         let config = await getTwitterAppConfig();
-        [ this.redirectUri, this.clientId ] = config.split(SPLITSYMBOL);
+        [ this.redirectUri, this.clientId ] = config.split(DELIMITER);
     }
 
     handleAuthorization() {
@@ -47,7 +47,7 @@ export default class TwitterAuthorizationComponent extends LightningElement {
         this.twitterUserSetting = result;
 
         if(result.data) {
-            [ this.username, this.expirationDateTime ] = result.data.split(SPLITSYMBOL);
+            [ this.username, this.expirationDateTime ] = result.data.split(DELIMITER);
         }
     }
 }

@@ -1,4 +1,6 @@
 public with sharing class TwitterAuthController {
+    public static final String DELIMITER = '~';
+
     @AuraEnabled(cacheable=false)
     public static void getAccessToken() {
         String authcode = ApexPages.currentPage().getParameters().get('code');
@@ -12,7 +14,7 @@ public with sharing class TwitterAuthController {
     public static String getTwitterUserSettings() {
         try {
             TwitterUserAuthSettings__c twitterUserSetting = TwitterUserAuthSettings__c.getInstance();
-            return twitterUserSetting.Username__c + '~' + twitterUserSetting.Expiration_Date__c.format('yyyy-MM-dd HH:mm:ss');
+            return twitterUserSetting.Username__c + DELIMITER + twitterUserSetting.Expiration_Date__c.format('yyyy-MM-dd HH:mm:ss');
         } catch (NullPointerException e) {
             ApexLogUtils.createLog(e.getMessage(), e.getStackTraceString(), 'Could not get your twitter authentication settings. Please authenticate to twitter on Auth Twitter tab', TwitterAuthController.class.getName());
             return '';
@@ -24,7 +26,7 @@ public with sharing class TwitterAuthController {
         try {
             String callbackUrl = TwitterAppConfigUtils.getCallBackUrl();
             String clientKey = TwitterAppConfigUtils.getClientKey();
-            return callbackUrl + '~' + clientKey;
+            return callbackUrl + DELIMITER + clientKey;
         } catch (NullPointerException e) {
             ApexLogUtils.createLog(e.getMessage(), e.getStackTraceString(), 'Could not get twitter app config. Please ask admin to help you', TwitterAuthController.class.getName());
             return '';
