@@ -9,8 +9,7 @@ public with sharing class TweetService implements ITweetService {
 
     public Boolean deleteTweet(String tweetId) {
         TwitterUserAuthSettings__c twitterUserASetting = TwitterUserAuthSettings__c.getInstance();
-        String baseUrl = 'https://api.twitter.com/2/tweets/';
-        String endpoint = baseUrl + tweetId;
+        String endpoint = TwitterAppConfigUtils.getBaseUrl() + '/2/tweets/' + tweetId;
 
         HttpRequest req = new HttpRequest();
         req.setEndpoint(endpoint);
@@ -44,7 +43,7 @@ public with sharing class TweetService implements ITweetService {
 
     public String createTweet(String tweetText) {
         TwitterUserAuthSettings__c twitterUserASetting = TwitterUserAuthSettings__c.getInstance();
-        String baseUrl = 'https://api.twitter.com/2/tweets';
+        String baseUrl = TwitterAppConfigUtils.getBaseUrl() + '/2/tweets/';
         String requestBody = '{"text": "' + tweetText + '"}';
 
         HttpRequest req = new HttpRequest();

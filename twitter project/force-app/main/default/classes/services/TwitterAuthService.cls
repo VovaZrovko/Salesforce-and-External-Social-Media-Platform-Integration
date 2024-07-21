@@ -1,6 +1,5 @@
 public with sharing class TwitterAuthService implements ITwitterAuthService{
-    private final String BASEURL = 'https://api.twitter.com';
-    private final String CALLBACKURL = 'https://resilient-wolf-fqzlz-dev-ed--c.vf.force.com/apex/intermidiateIntegrationVFPage';
+    private String baseUrl;
     private final String ACCESS_TOKEN = 'access_token';
     private final String EXPIRES_IN = 'expires_in';
     private final String USERNAME = 'username';
@@ -9,16 +8,21 @@ public with sharing class TwitterAuthService implements ITwitterAuthService{
     public static ITwitterAuthService newInstance() {
         return new TwitterAuthService();
     }
+    public TwitterAuthService() {
+        this.baseUrl = TwitterAppConfigUtils.getBaseUrl(); //for future need check on null
+    }
 
     public void getAccessToken(String authcode) {
-        String endpoint = BASEURL + '/2/oauth2/token';
+        String endpoint = this.baseUrl + '/2/oauth2/token';
+        String callbackUrl = TwitterAppConfigUtils.getCallBackUrl();
+        String clientId = TwitterAppConfigUtils.getClientKey();
+        String authorizationCode = TwitterAppConfigUtils.getBase64EncodedCredentials();
         HttpRequest req = new HttpRequest();
         req.setEndpoint(endpoint);
         req.setMethod('POST');
-        req.setHeader('Authorization', 'Basic VDNOMmJHNUpjbkIyUzA5SldISTRZbFZIU1dFNk1UcGphUTpaVkRnRGZlbno3T21nVGlsQzJTQXdoREc1ZzB4MmJ3THc1QXFUYXFVU3RiZkJ6TlpOdg=='); // Base64 Encode.     Basic {ClientID}:{ClientSecret}
+        req.setHeader('Authorization', 'Basic ' + authorizationCode);
         req.setHeader('Content-Type', 'application/x-www-form-urlencoded');
-        req.setBody('grant_type=authorization_code&code=' + EncodingUtil.urlEncode(authcode, 'UTF-8') + '&client_id=T3N2bG5JcnB2S09JWHI4YlVHSWE6MTpjaQ&code_verifier=challenge&redirect_uri=' + CALLBACKURL);
-
+        req.setBody('grant_type=authorization_code&code=' + EncodingUtil.urlEncode(authcode, 'UTF-8') + '&client_id= ' + clientId + '&code_verifier=challenge&redirect_uri=' + callbackUrl);
         Http http = new Http();
 
         try {
@@ -43,7 +47,7 @@ public with sharing class TwitterAuthService implements ITwitterAuthService{
     }
     
     public void getUserInfo(String accessToken, DateTime expirationDate) {
-        String endpoint = BASEURL + '/2/users/me';
+        String endpoint = this.baseUrl + '/2/users/me';
 
         HttpRequest req = new HttpRequest();
         req.setEndpoint(endpoint);
@@ -80,4 +84,5 @@ public with sharing class TwitterAuthService implements ITwitterAuthService{
             ApexLogUtils.createLogs(ur.getErrors(), 'Something happend with updating Auth data for user. Please ask administrator for help' , TwitterAuthService.class.getName());
         }
     }
+
 }
