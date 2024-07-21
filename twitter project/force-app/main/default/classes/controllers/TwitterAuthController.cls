@@ -18,4 +18,16 @@ public with sharing class TwitterAuthController {
             return '';
         }
     }
+
+    @AuraEnabled(cacheable=true)
+    public static String getTwitterAppConfig() {
+        try {
+            String callbackUrl = TwitterAppConfigUtils.getCallBackUrl();
+            String clientKey = TwitterAppConfigUtils.getClientKey();
+            return callbackUrl + '~' + clientKey;
+        } catch (NullPointerException e) {
+            ApexLogUtils.createLog(e.getMessage(), e.getStackTraceString(), 'Could not get twitter app config. Please ask admin to help you', TwitterAuthController.class.getName());
+            return '';
+        }
+    }
 }
