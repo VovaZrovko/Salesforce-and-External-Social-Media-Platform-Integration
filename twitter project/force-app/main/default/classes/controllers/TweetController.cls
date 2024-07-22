@@ -40,7 +40,7 @@ public with sharing class TweetController {
         return getTweetService().isUserAndUsernameSame(contactId);
     }
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled(cacheable=false)
     public static String createTweet(String tweetText) {
         return getTweetService().createTweet(tweetText);
     }

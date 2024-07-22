@@ -21,7 +21,7 @@ public with sharing class TwitterAuthController {
         }
     }
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled(cacheable=false)
     public static String getTwitterAppConfig() {
         try {
             String callbackUrl = TwitterAppConfigUtils.getCallBackUrl();
