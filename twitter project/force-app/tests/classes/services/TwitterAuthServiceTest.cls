@@ -2,6 +2,16 @@
 private with sharing class TwitterAuthServiceTest {
     private static final String USERNAME = 'test username';
     private static final String ACCESS_TOKEN = 'accesstoken';
+    private static final String TWITTER_APP_CONFIG = 'Twitter App Config';
+    
+    @TestSetup
+    static void setup() {
+        TwitterAppConfig__c twitterAppCofig = new TwitterAppConfig__c();
+        twitterAppCofig.Name = TWITTER_APP_CONFIG;
+        twitterAppCofig.Base_URL__c = 'base url';
+        insert twitterAppCofig;
+    }
+
     @IsTest
     static void testSaveUserAuthSettingPositive() {
         TwitterAuthService tas = new TwitterAuthService();
