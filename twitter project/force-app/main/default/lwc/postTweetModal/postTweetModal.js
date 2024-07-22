@@ -37,15 +37,18 @@ export default class PostTweetModal extends LightningElement {
             let tweetId = await createTweet({ tweetText: tweetText });
             let isTweetInserted;
 
-            if (tweetId) {
+            if (tweetId && tweetId != undefined) {
                 isTweetInserted = await createTweetRecord({ tweetText: tweetText, tweetId: tweetId, contactId: this.recordId});
             }
 
-            if (isTweetInserted) {
+            if (isTweetInserted && isTweetInserted != undefined) {
                 const message = { isTweetUpdated: true };
                 publish(this.messageContext, TWEET_CREATION_MESSAGE, message);
+            } else {
+                this.closeModal();
+                this.showToast('Error','Something happaned', 'error');
+                return;
             }
-
         } catch (error) {
             console.log('error ' + error + '  ' + JSON.stringify(error));
         }
