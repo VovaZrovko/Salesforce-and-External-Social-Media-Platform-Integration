@@ -2,6 +2,7 @@
 private with sharing class TweetServiceTest {
     private static final String USER_SETTINGS_USERNAME = 'test username';
     private static final String TWEET_EXTERNAL_ID = '12345';
+    private static final String TWITTER_APP_CONFIG = 'Twitter App Config';
 
     @TestSetup
     static void setup() {
@@ -15,6 +16,11 @@ private with sharing class TweetServiceTest {
         twitterUserASetting.Access_Token__c = 'accesstoken';
         twitterUserASetting.Username__c = USER_SETTINGS_USERNAME;
         insert twitterUserASetting;
+
+        TwitterAppConfig__c twitterAppCofig = new TwitterAppConfig__c();
+        twitterAppCofig.Name = TWITTER_APP_CONFIG;
+        twitterAppCofig.Base_URL__c = 'base url';
+        insert twitterAppCofig;
     }
 
     @IsTest
