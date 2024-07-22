@@ -1,4 +1,5 @@
 public without sharing class ApexLogUtils {
+    @future
     public static void createLog(String message, String stackTrace, String userMessage, String className) {
         Log__c newLog = new Log__c();
         newLog.Message__c = message;
